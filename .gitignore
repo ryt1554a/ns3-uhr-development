@@ -1,0 +1,28 @@
+# Build artifacts
+/build/
+/cmake-cache/
+*.o
+*.so
+*.a
+*.pyc
+*.pyo
+*.pyd
+
+# Executables
+ns3*
+*.exe
+
+# PCAP trace files
+*.pcap
+
+# NetAnim trace file
+*.xml
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Waf lock file
+.lock-w*
