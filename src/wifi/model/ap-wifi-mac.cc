@@ -1662,7 +1662,7 @@ ApWifiMac::ReceiveAssocRequest(const AssocReqRefVariant& assoc,
         }
         if (GetUhrSupported())
         {
-        
+            
         }
         // The association request from the station can be accepted.
         // Record all its supported modes in its associated WifiRemoteStation

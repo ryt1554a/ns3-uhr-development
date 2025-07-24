@@ -24,6 +24,7 @@
 #include "ns3/ampdu-subframe-header.h"
 #include "ns3/ap-wifi-mac.h"
 #include "ns3/config.h"
+#include "ns3/uhr-configuration.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/he-configuration.h"
 #include "ns3/ht-configuration.h"
@@ -732,6 +733,7 @@ WifiHelper::WifiHelper()
     m_vhtConfig.SetTypeId("ns3::VhtConfiguration");
     m_heConfig.SetTypeId("ns3::HeConfiguration");
     m_ehtConfig.SetTypeId("ns3::EhtConfiguration");
+    m_uhrConfig.SetTypeId("ns3::UhrConfiguration");
 }
 
 void
@@ -794,6 +796,11 @@ WifiHelper::Install(const WifiPhyHelper& phyHelper,
         {
             auto ehtConfiguration = m_ehtConfig.Create<EhtConfiguration>();
             device->SetEhtConfiguration(ehtConfiguration);
+        }
+        if (m_standard >= WIFI_STANDARD_80211bn)
+        {
+            auto uhrConfiguration = m_uhrConfig.Create<UhrConfiguration>();
+            device->SetUhrConfiguration(uhrConfiguration);
         }
         std::vector<Ptr<WifiRemoteStationManager>> managers;
         std::vector<Ptr<WifiPhy>> phys = phyHelper.Create(node, device);

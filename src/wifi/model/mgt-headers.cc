@@ -257,7 +257,7 @@ MgtProbeRequestHeader::Print(std::ostream& os) const
     }
     if (m_ehtCapability.has_value())
     {
-        os << "EHT Capabilities=" << *m_ehtCapability;
+        os << "EHT Capabilities=" << *m_ehtCapability << " , ";
     }
     if (m_uhrCapability.has_value())
     {

@@ -272,6 +272,10 @@ StaWifiMac::SendProbeRequest()
     {
         probe.SetEhtCapabilities(GetEhtCapabilities(SINGLE_LINK_OP_ID));
     }
+    if (GetUhrSupported())
+    {
+        probe.SetUhrCapabilities(GetUhrCapabilities(SINGLE_LINK_OP_ID));
+    }
     packet->AddHeader(probe);
 
     if (!GetQosSupported())
