@@ -1,48 +1,82 @@
 name: "CI"
 
 on: [push]
+
 jobs:
   Ubuntu:
     runs-on: ubuntu-latest
     outputs:
       cache_misses: ${{ env.cache_misses }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Install required packages
+      # 步驟 1: 將您的程式碼下載到虛擬機中
+      - uses: actions/checkout@v4 # 更新到 v4 版本
+
+      # 步驟 2: 使用官方 action 來設定 Python 環境
+      - name: Set up Python
+        uses: actions/setup-python@v5 # 更新到 v5 版本
+        with:
+          python-version: '3.12.3' # 您可以在此指定需要的 Python 版本
+
+      # 步驟 3: 一次性安裝所有需要的系統套件 (不再需要安裝 python)
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -y install apt-utils
-          sudo apt-get -y install git gcc g++ cmake python make ninja-build
-          sudo apt-get -y install tcpdump libgsl-dev libxml2-dev
-          sudo apt-get -y install curl unzip tar
-          sudo apt-get -y install ccache
+          sudo apt-get -y install \
+            apt-utils \
+            git \
+            gcc \
+            g++ \
+            cmake \
+            make \
+            ninja-build \
+            tcpdump \
+            libgsl-dev \
+            libxml2-dev \
+            curl \
+            unzip \
+            tar \
+            ccache
+
+      # 步驟 4: 獲取時間戳 (不需變更)
       - name: Get timestamp
         id: time
         run: python3 -c "from datetime import datetime; print('time='+datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))" >> $GITHUB_ENV
+
+      # 步驟 5: 還原 ccache 快取
       - name: Restore ccache
         id: ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4 # 更新到 v4 版本
         with:
           path: .ccache
           key: ubuntu-ci-${{env.time}}
           restore-keys: ubuntu-ci-
+
+      # 步驟 6: 設定 ccache (不需變更)
       - name: Setup ccache
         run: |
           ccache --set-config=cache_dir="$GITHUB_WORKSPACE/.ccache"
           ccache --set-config=max_size=400M
           ccache --set-config=compression=true
           ccache -z
+
+      # 步驟 7: 設定 CMake (不需變更)
       - name: Configure CMake
         run: |
           ./ns3 configure -d release --enable-asserts --enable-examples --enable-tests --disable-werror -G"Ninja"
+
+      # 步驟 8: 編譯 ns-3 (不需變更)
       - name: Build ns-3
         run: |
           ./ns3 build
+
+      # 步驟 9: 打印 ccache 統計 (不需變更)
       - name: Print ccache statistics
         id: ccache_results
         run: |
           ccache -s
           python3 -c "import re, subprocess;print('cache_misses=%d' % int(re.findall('cache_miss(.*)', subprocess.check_output(['ccache', '--print-stats']).decode())[0]))" >> $GITHUB_ENV
+
+      # 步驟 10: 執行測試與範例 (不需變更)
       - name: Run tests and examples
         if: env.cache_misses != '0'
         run: python3 test.py --no-build
