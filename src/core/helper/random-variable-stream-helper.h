@@ -19,6 +19,7 @@
 #define RANDOM_VARIABLE_STREAM_HELPER_H
 
 #include <string>
+#include <cstdint>
 
 /**
  * \file
