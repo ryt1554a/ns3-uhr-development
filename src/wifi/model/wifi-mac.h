@@ -47,6 +47,7 @@ class HtConfiguration;
 class VhtConfiguration;
 class HeConfiguration;
 class EhtConfiguration;
+class UhrConfiguration;
 class FrameExchangeManager;
 class ChannelAccessManager;
 class ExtendedCapabilities;
@@ -411,6 +412,10 @@ class WifiMac : public Object
      * \return pointer to EhtConfiguration if it exists
      */
     Ptr<EhtConfiguration> GetEhtConfiguration() const;
+    /**
+     * \return pointer to UhrConfiguration if it exists
+     */
+    Ptr<UhrConfiguration> GetUhrConfiguration() const;
 
     /**
      * Return the extended capabilities of the device.
@@ -446,6 +451,13 @@ class WifiMac : public Object
      * \return the EHT capabilities that we support
      */
     EhtCapabilities GetEhtCapabilities(uint8_t linkId) const;
+    /**
+     * Return the UHR capabilities of the device for the given link.
+     *
+     * \param linkId the ID of the given link
+     * \return the UHR capabilities that we support
+     */
+    UhrCapabilities GetUhrCapabilities(uint8_t linkId) const;
 
     /**
      * Return whether the device supports QoS.
@@ -492,7 +504,13 @@ class WifiMac : public Object
      * \return true if EHT is supported, false otherwise
      */
     bool GetEhtSupported() const;
-
+    /**
+     * Return whether the device supports UHR.
+     *
+     * \return true if UHR is supported, false otherwise
+     */
+    bool GetUhrSupported() const;
+    
     /**
      * Return the maximum A-MPDU size of the given Access Category.
      *

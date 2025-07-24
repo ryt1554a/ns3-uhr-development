@@ -26,6 +26,7 @@
 #include "wifi-utils.h"
 
 #include "ns3/data-rate.h"
+#include "ns3/uhr-capabilities.h"
 #include "ns3/eht-capabilities.h"
 #include "ns3/he-capabilities.h"
 #include "ns3/ht-capabilities.h"
@@ -113,6 +114,7 @@ struct WifiRemoteStationState
     Ptr<const VhtCapabilities> m_vhtCapabilities; //!< remote station VHT capabilities
     Ptr<const HeCapabilities> m_heCapabilities;   //!< remote station HE capabilities
     Ptr<const EhtCapabilities> m_ehtCapabilities; //!< remote station EHT capabilities
+    Ptr<const UhrCapabilities> m_uhrCapabilities; //!< remote station UHR capabilities
 
     uint16_t m_channelWidth;  //!< Channel width (in MHz) supported by the remote station
     uint16_t m_guardInterval; //!< HE Guard interval duration (in nanoseconds) supported by the
@@ -260,6 +262,13 @@ class WifiRemoteStationManager : public Object
      */
     void AddStationEhtCapabilities(Mac48Address from, EhtCapabilities ehtCapabilities);
     /**
+     * Records UHR capabilities of the remote station.
+     *
+     * \param from the address of the station being recorded
+     * \param uhrCapabilities the UHR capabilities of the station
+     */
+    void AddStationUhrCapabilities(Mac48Address from, UhrCapabilities uhrCapabilities);
+    /**
      * Return the HT capabilities sent by the remote station.
      *
      * \param from the address of the remote station
@@ -288,6 +297,13 @@ class WifiRemoteStationManager : public Object
      */
     Ptr<const EhtCapabilities> GetStationEhtCapabilities(Mac48Address from);
     /**
+     * Return the UHR capabilities sent by the remote station.
+     *
+     * \param from the address of the remote station
+     * \return the UHR capabilities sent by the remote station
+     */
+    Ptr<const UhrCapabilities> GetStationUhrCapabilities(Mac48Address from);
+    /**
      * Return whether the device has HT capability support enabled.
      *
      * \return true if HT capability support is enabled, false otherwise
@@ -311,6 +327,12 @@ class WifiRemoteStationManager : public Object
      * \return true if EHT capability support is enabled, false otherwise
      */
     bool GetEhtSupported() const;
+    /**
+     * Return whether the device has UHR capability support enabled.
+     *
+     * \return true if UHR capability support is enabled, false otherwise
+     */
+    bool GetUhrSupported() const;
     /**
      * Return whether the device has LDPC support enabled.
      *
@@ -610,6 +632,15 @@ class WifiRemoteStationManager : public Object
      */
     bool GetEhtSupported(Mac48Address address) const;
 
+    /**
+     * Return whether the station supports UHR or not.
+     *
+     * \param address the address of the station
+     * \return true if UHR is supported by the station,
+     *         false otherwise
+     */
+    bool GetUhrSupported(Mac48Address address) const;
+    
     /**
      * Return a mode for non-unicast packets.
      *
@@ -1096,6 +1127,14 @@ class WifiRemoteStationManager : public Object
      *         false otherwise
      */
     bool GetEhtSupported(const WifiRemoteStation* station) const;
+    /**
+     * Return whether the given station is UHR capable.
+     *
+     * \param station the station being queried
+     * \return true if the station has UHR capabilities, 
+     *         false otherwise
+     */
+    bool GetUhrSupported(const WifiRemoteStation* station) const;
     /**
      * Return the WifiMode supported by the specified station at the specified index.
      *

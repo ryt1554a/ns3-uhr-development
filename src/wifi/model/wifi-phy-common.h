@@ -90,7 +90,9 @@ enum WifiPreamble
     WIFI_PREAMBLE_HE_MU,
     WIFI_PREAMBLE_HE_TB,
     WIFI_PREAMBLE_EHT_MU,
-    WIFI_PREAMBLE_EHT_TB
+    WIFI_PREAMBLE_EHT_TB,
+    WIFI_PREAMBLE_UHR_MU,
+    WIFI_PREAMBLE_UHR_TB
 };
 
 /**
@@ -133,6 +135,10 @@ operator<<(std::ostream& os, const WifiPreamble& preamble)
         return (os << "EHT_MU");
     case WIFI_PREAMBLE_EHT_TB:
         return (os << "EHT_TB");
+    case WIFI_PREAMBLE_UHR_MU:
+        return (os << "UHR_MU");
+    case WIFI_PREAMBLE_UHR_TB:
+        return (os << "UHR_TB");
     default:
         NS_FATAL_ERROR("Invalid preamble");
         return (os << "INVALID");
@@ -161,7 +167,8 @@ enum WifiModulationClass
     WIFI_MOD_CLASS_DMG_SC,    //!< DMG (Clause 21)
     WIFI_MOD_CLASS_DMG_LP_SC, //!< DMG (Clause 21)
     WIFI_MOD_CLASS_HE,        //!< HE (Clause 27)
-    WIFI_MOD_CLASS_EHT        //!< EHT (Clause 36)
+    WIFI_MOD_CLASS_EHT,       //!< EHT (Clause 36)
+    WIFI_MOD_CLASS_UHR        //!< UHR (Clause 38)
 };
 
 /**
@@ -200,6 +207,8 @@ operator<<(std::ostream& os, const WifiModulationClass& modulation)
         return (os << "HE");
     case WIFI_MOD_CLASS_EHT:
         return (os << "EHT");
+    case WIFI_MOD_CLASS_UHR:
+        return (os << "UHR");
     default:
         NS_FATAL_ERROR("Unknown modulation");
         return (os << "unknown");

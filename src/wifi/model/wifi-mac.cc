@@ -30,6 +30,7 @@
 #include "wifi-mac-queue.h"
 #include "wifi-net-device.h"
 
+#include "ns3/uhr-configuration.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/he-configuration.h"
 #include "ns3/he-frame-exchange-manager.h"
@@ -791,7 +792,11 @@ WifiMac::SetupFrameExchangeManager(WifiStandard standard)
     NS_ABORT_MSG_IF(standard == WIFI_STANDARD_UNSPECIFIED, "Wifi standard not set");
     Ptr<FrameExchangeManager> feManager;
 
-    if (standard >= WIFI_STANDARD_80211ax)
+    if (standard >= WIFI_STANDARD_80211bn)
+    {
+        feManager = CreateObject<HeFrameExchangeManager>();
+    }
+    else if (standard >= WIFI_STANDARD_80211ax)
     {
         feManager = CreateObject<HeFrameExchangeManager>();
     }
@@ -1258,6 +1263,12 @@ WifiMac::GetEhtConfiguration() const
     return GetDevice()->GetEhtConfiguration();
 }
 
+Ptr<UhrConfiguration>
+WifiMac::GetUhrConfiguration() const
+{
+    return GetDevice()->GetUhrConfiguration();
+}
+
 bool
 WifiMac::GetHtSupported() const
 {
@@ -1281,6 +1292,12 @@ bool
 WifiMac::GetEhtSupported() const
 {
     return bool(GetDevice()->GetEhtConfiguration());
+}
+
+bool
+WifiMac::GetUhrSupported() const
+{
+    return bool(GetDevice()->GetUhrConfiguration());
 }
 
 void
@@ -1575,6 +1592,21 @@ WifiMac::GetEhtCapabilities(uint8_t linkId) const
     NS_ASSERT(GetEhtSupported());
     EhtCapabilities capabilities;
     // TODO: fill in EHT capabilities
+    return capabilities;
+}
+
+UhrCapabilities
+WifiMac::GetUhrCapabilities(uint8_t linkId) const
+{
+    NS_LOG_FUNCTION(this << +linkId);
+    NS_ASSERT(GetUhrSupported());
+    UhrCapabilities capabilities;
+    
+    Ptr<UhrConfiguration> uhrConfiguration = GetUhrConfiguration();
+    // Populate the capabilities IE from the configuration object
+    capabilities.SetUneqmSupported(uhrConfiguration->IsUneqmEnabled());
+    
+    // TODO: Add other UHR capabilities here as you define them
     return capabilities;
 }
 

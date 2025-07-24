@@ -23,6 +23,7 @@
 
 #include "qos-txop.h"
 
+#include "ns3/uhr-capabilities.h"
 #include "ns3/eht-capabilities.h"
 #include "ns3/he-capabilities.h"
 #include "ns3/ht-capabilities.h"

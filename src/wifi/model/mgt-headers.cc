@@ -157,6 +157,24 @@ MgtProbeRequestHeader::GetEhtCapabilities() const
     return m_ehtCapability;
 }
 
+void
+MgtProbeRequestHeader::SetUhrCapabilities(const UhrCapabilities& uhrCapabilities)
+{
+    m_uhrCapability = uhrCapabilities;
+}
+
+void
+MgtProbeRequestHeader::SetUhrCapabilities(UhrCapabilities&& uhrCapabilities)
+{
+    m_uhrCapability = std::move(uhrCapabilities);
+}
+
+const std::optional<UhrCapabilities>&
+MgtProbeRequestHeader::GetUhrCapabilities() const
+{
+    return m_uhrCapability;
+}
+
 const SupportedRates&
 MgtProbeRequestHeader::GetSupportedRates() const
 {
@@ -192,6 +210,10 @@ MgtProbeRequestHeader::GetSerializedSize() const
     if (m_ehtCapability.has_value())
     {
         size += m_ehtCapability->GetSerializedSize();
+    }
+    if (m_uhrCapability.has_value())
+    {
+        size += m_uhrCapability->GetSerializedSize();
     }
     return size;
 }
@@ -237,6 +259,10 @@ MgtProbeRequestHeader::Print(std::ostream& os) const
     {
         os << "EHT Capabilities=" << *m_ehtCapability;
     }
+    if (m_uhrCapability.has_value())
+    {
+        os << "UHR Capabilities=" << *m_uhrCapability;
+    }
 }
 
 void
@@ -269,6 +295,10 @@ MgtProbeRequestHeader::Serialize(Buffer::Iterator start) const
     {
         i = m_ehtCapability->Serialize(i);
     }
+    if (m_uhrCapability.has_value())
+    {
+        i = m_uhrCapability->Serialize(i);
+    }
 }
 
 uint32_t
@@ -283,6 +313,7 @@ MgtProbeRequestHeader::Deserialize(Buffer::Iterator start)
     i = WifiInformationElement::DeserializeIfPresent(m_vhtCapability, i);
     i = WifiInformationElement::DeserializeIfPresent(m_heCapability, i);
     i = WifiInformationElement::DeserializeIfPresent(m_ehtCapability, i);
+    i = WifiInformationElement::DeserializeIfPresent(m_uhrCapability, i);
     return i.GetDistanceFrom(start);
 }
 
@@ -484,6 +515,24 @@ const std::optional<EhtCapabilities>&
 MgtProbeResponseHeader::GetEhtCapabilities() const
 {
     return m_ehtCapability;
+}
+
+void
+MgtProbeResponseHeader::SetUhrCapabilities(const UhrCapabilities& uhrCapabilities)
+{
+    m_uhrCapability = uhrCapabilities;
+}
+
+void
+MgtProbeResponseHeader::SetUhrCapabilities(UhrCapabilities&& uhrCapabilities)
+{
+    m_uhrCapability = std::move(uhrCapabilities);
+}
+
+const std::optional<UhrCapabilities>&
+MgtProbeResponseHeader::GetUhrCapabilities() const
+{
+    return m_uhrCapability;
 }
 
 void
@@ -709,6 +758,10 @@ MgtProbeResponseHeader::GetSerializedSize() const
     {
         size += m_ehtCapability->GetSerializedSize();
     }
+    if (m_uhrCapability.has_value())
+    {
+        size += m_uhrCapability->GetSerializedSize();
+    }
     return size;
 }
 
@@ -751,7 +804,11 @@ MgtProbeResponseHeader::Print(std::ostream& os) const
     }
     if (m_ehtCapability.has_value())
     {
-        os << "EHT Capabilities=" << *m_ehtCapability;
+        os << "EHT Capabilities=" << *m_ehtCapability << " , ";
+    }
+    if (m_uhrCapability.has_value())
+    {
+        os << "UHR Capabilities=" << *m_uhrCapability;
     }
 }
 
@@ -824,6 +881,10 @@ MgtProbeResponseHeader::Serialize(Buffer::Iterator start) const
     {
         i = m_ehtCapability->Serialize(i);
     }
+    if (m_uhrCapability.has_value())
+    {
+        i = m_uhrCapability->Serialize(i);
+    }
 }
 
 uint32_t
@@ -852,6 +913,7 @@ MgtProbeResponseHeader::Deserialize(Buffer::Iterator start)
     i = WifiInformationElement::DeserializeIfPresent(m_muEdcaParameterSet, i);
     i = WifiInformationElement::DeserializeIfPresent(m_multiLinkElement, i, WIFI_MAC_MGT_BEACON);
     i = WifiInformationElement::DeserializeIfPresent(m_ehtCapability, i);
+    i = WifiInformationElement::DeserializeIfPresent(m_uhrCapability, i);
 
     return i.GetDistanceFrom(start);
 }
@@ -1027,6 +1089,24 @@ MgtAssocRequestHeader::GetEhtCapabilities() const
 }
 
 void
+MgtAssocRequestHeader::SetUhrCapabilities(const UhrCapabilities& uhrCapabilities)
+{
+    m_uhrCapability = uhrCapabilities;
+}
+
+void
+MgtAssocRequestHeader::SetUhrCapabilities(UhrCapabilities&& uhrCapabilities)
+{
+    m_uhrCapability = std::move(uhrCapabilities);
+}
+
+const std::optional<UhrCapabilities>&
+MgtAssocRequestHeader::GetUhrCapabilities() const
+{
+    return m_uhrCapability;
+}
+
+void
 MgtAssocRequestHeader::SetMultiLinkElement(const MultiLinkElement& multiLinkElement)
 {
     m_multiLinkElement = multiLinkElement;
@@ -1114,6 +1194,10 @@ MgtAssocRequestHeader::GetSerializedSize() const
     {
         size += m_ehtCapability->GetSerializedSize();
     }
+    if (m_uhrCapability.has_value())
+    {
+        size += m_uhrCapability->GetSerializedSize();
+    }
     return size;
 }
 
@@ -1140,7 +1224,11 @@ MgtAssocRequestHeader::Print(std::ostream& os) const
     }
     if (m_ehtCapability.has_value())
     {
-        os << "EHT Capabilities=" << *m_ehtCapability;
+        os << "EHT Capabilities=" << *m_ehtCapability << " , ";
+    }
+    if (m_uhrCapability.has_value())
+    {
+        os << "UHR Capabilities=" << *m_uhrCapability;
     }
 }
 
@@ -1180,6 +1268,10 @@ MgtAssocRequestHeader::Serialize(Buffer::Iterator start) const
     {
         i = m_ehtCapability->Serialize(i);
     }
+    if (m_uhrCapability.has_value())
+    {
+        i = m_uhrCapability->Serialize(i);
+    }
 }
 
 uint32_t
@@ -1200,6 +1292,7 @@ MgtAssocRequestHeader::Deserialize(Buffer::Iterator start)
                                                      i,
                                                      WIFI_MAC_MGT_ASSOCIATION_REQUEST);
     i = WifiInformationElement::DeserializeIfPresent(m_ehtCapability, i);
+    i = WifiInformationElement::DeserializeIfPresent(m_uhrCapability, i);
     return i.GetDistanceFrom(start);
 }
 
@@ -1357,6 +1450,24 @@ MgtReassocRequestHeader::GetEhtCapabilities() const
 }
 
 void
+MgtReassocRequestHeader::SetUhrCapabilities(const UhrCapabilities& uhrCapabilities)
+{
+    m_uhrCapability = uhrCapabilities;
+}
+
+void
+MgtReassocRequestHeader::SetUhrCapabilities(UhrCapabilities&& uhrCapabilities)
+{
+    m_uhrCapability = std::move(uhrCapabilities);
+}
+
+const std::optional<UhrCapabilities>&
+MgtReassocRequestHeader::GetUhrCapabilities() const
+{
+    return m_uhrCapability;
+}
+
+void
 MgtReassocRequestHeader::SetMultiLinkElement(const MultiLinkElement& multiLinkElement)
 {
     m_multiLinkElement = multiLinkElement;
@@ -1451,6 +1562,10 @@ MgtReassocRequestHeader::GetSerializedSize() const
     {
         size += m_ehtCapability->GetSerializedSize();
     }
+    if (m_uhrCapability.has_value())
+    {
+        size += m_uhrCapability->GetSerializedSize();
+    }
     return size;
 }
 
@@ -1478,7 +1593,11 @@ MgtReassocRequestHeader::Print(std::ostream& os) const
     }
     if (m_ehtCapability.has_value())
     {
-        os << "EHT Capabilities=" << *m_ehtCapability;
+        os << "EHT Capabilities=" << *m_ehtCapability << " , ";
+    }
+    if (m_uhrCapability.has_value())
+    {
+        os << "UHR Capabilities=" << *m_uhrCapability;
     }
 }
 
@@ -1519,6 +1638,10 @@ MgtReassocRequestHeader::Serialize(Buffer::Iterator start) const
     {
         i = m_ehtCapability->Serialize(i);
     }
+    if (m_uhrCapability.has_value())
+    {
+        i = m_uhrCapability->Serialize(i);
+    }
 }
 
 uint32_t
@@ -1540,6 +1663,7 @@ MgtReassocRequestHeader::Deserialize(Buffer::Iterator start)
                                                      i,
                                                      WIFI_MAC_MGT_REASSOCIATION_REQUEST);
     i = WifiInformationElement::DeserializeIfPresent(m_ehtCapability, i);
+    i = WifiInformationElement::DeserializeIfPresent(m_uhrCapability, i);
     return i.GetDistanceFrom(start);
 }
 
@@ -1751,6 +1875,24 @@ MgtAssocResponseHeader::GetEhtCapabilities() const
 }
 
 void
+MgtAssocResponseHeader::SetUhrCapabilities(const UhrCapabilities& uhrCapabilities)
+{
+    m_uhrCapability = uhrCapabilities;
+}
+
+void
+MgtAssocResponseHeader::SetUhrCapabilities(UhrCapabilities&& uhrCapabilities)
+{
+    m_uhrCapability = std::move(uhrCapabilities);
+}
+
+const std::optional<UhrCapabilities>&
+MgtAssocResponseHeader::GetUhrCapabilities() const
+{
+    return m_uhrCapability;
+}
+
+void
 MgtAssocResponseHeader::SetMultiLinkElement(const MultiLinkElement& multiLinkElement)
 {
     m_multiLinkElement = multiLinkElement;
@@ -1910,6 +2052,10 @@ MgtAssocResponseHeader::GetSerializedSize() const
     {
         size += m_ehtCapability->GetSerializedSize();
     }
+    if (m_uhrCapability.has_value())
+    {
+        size += m_uhrCapability->GetSerializedSize();
+    }
     return size;
 }
 
@@ -1953,7 +2099,11 @@ MgtAssocResponseHeader::Print(std::ostream& os) const
     }
     if (m_ehtCapability.has_value())
     {
-        os << "EHT Capabilities=" << *m_ehtCapability;
+        os << "EHT Capabilities=" << *m_ehtCapability << " , ";
+    }
+    if (m_uhrCapability.has_value())
+    {
+        os << "UHR Capabilities=" << *m_uhrCapability;
     }
 }
 
@@ -2017,6 +2167,10 @@ MgtAssocResponseHeader::Serialize(Buffer::Iterator start) const
     {
         i = m_ehtCapability->Serialize(i);
     }
+    if (m_uhrCapability.has_value())
+    {
+        i = m_uhrCapability->Serialize(i);
+    }
 }
 
 uint32_t
@@ -2043,6 +2197,7 @@ MgtAssocResponseHeader::Deserialize(Buffer::Iterator start)
                                                      i,
                                                      WIFI_MAC_MGT_ASSOCIATION_RESPONSE);
     i = WifiInformationElement::DeserializeIfPresent(m_ehtCapability, i);
+    i = WifiInformationElement::DeserializeIfPresent(m_uhrCapability, i);
     return i.GetDistanceFrom(start);
 }
 

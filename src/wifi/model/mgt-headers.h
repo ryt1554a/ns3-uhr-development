@@ -33,6 +33,7 @@
 #include "ns3/dsss-parameter-set.h"
 #include "ns3/eht-capabilities.h"
 #include "ns3/erp-information.h"
+#include "ns3/uhr-capabilities.h"
 #include "ns3/he-capabilities.h"
 #include "ns3/he-operation.h"
 #include "ns3/ht-capabilities.h"
@@ -144,6 +145,15 @@ class MgtAssocRequestHeader : public Header
     void SetEhtCapabilities(EhtCapabilities&& ehtCapabilities);
 
     /**
+     * Set the UHR capabilities.
+     * \param uhrCapabilities UHR capabilities
+     */
+    void SetUhrCapabilities(const UhrCapabilities& uhrCapabilities);
+
+    /** \copydoc SetUhrCapabilities */
+    void SetUhrCapabilities(UhrCapabilities&& uhrCapabilities);
+
+    /**
      * Set the Multi-Link Element information element
      *
      * \param multiLinkElement the Multi-Link Element information element
@@ -189,6 +199,11 @@ class MgtAssocRequestHeader : public Header
      * \return EHT capabilities, if present
      */
     const std::optional<EhtCapabilities>& GetEhtCapabilities() const;
+    /**
+     * Return the UHR capabilities, if present.
+     * \return UHR capabilities, if present
+     */
+    const std::optional<UhrCapabilities>& GetUhrCapabilities() const;
     /**
      * Return the Service Set Identifier (SSID).
      *
@@ -236,6 +251,7 @@ class MgtAssocRequestHeader : public Header
     std::optional<HeCapabilities> m_heCapability;             //!< HE capabilities
     uint16_t m_listenInterval;                                //!< listen interval
     std::optional<EhtCapabilities> m_ehtCapability;           //!< EHT capabilities
+    std::optional<UhrCapabilities> m_uhrCapability;           //!< UHR capabilities
     std::optional<MultiLinkElement> m_multiLinkElement;       //!< Multi-Link Element
 };
 
@@ -337,6 +353,15 @@ class MgtReassocRequestHeader : public Header
     void SetEhtCapabilities(EhtCapabilities&& ehtCapabilities);
 
     /**
+     * Set the UHR capabilities.
+     * \param uhrCapabilities UHR capabilities
+     */
+    void SetUhrCapabilities(const UhrCapabilities& uhrCapabilities);
+
+    /** \copydoc SetUhrCapabilities */
+    void SetUhrCapabilities(UhrCapabilities&& uhrCapabilities);
+
+    /**
      * Set the Multi-Link Element information element
      *
      * \param multiLinkElement the Multi-Link Element information element
@@ -382,6 +407,11 @@ class MgtReassocRequestHeader : public Header
      * \return EHT capabilities, if present
      */
     const std::optional<EhtCapabilities>& GetEhtCapabilities() const;
+    /**
+     * Return the UHR capabilities, if present.
+     * \return UHR capabilities, if present
+     */
+    const std::optional<UhrCapabilities>& GetUhrCapabilities() const;
     /**
      * Return the Service Set Identifier (SSID).
      *
@@ -435,6 +465,7 @@ class MgtReassocRequestHeader : public Header
     std::optional<HeCapabilities> m_heCapability;             //!< HE capabilities
     uint16_t m_listenInterval;                                //!< listen interval
     std::optional<EhtCapabilities> m_ehtCapability;           //!< EHT capabilities
+    std::optional<UhrCapabilities> m_uhrCapability;         //!< UHR capabilities
     std::optional<MultiLinkElement> m_multiLinkElement;       //!< Multi-Link Element
 };
 
@@ -514,6 +545,11 @@ class MgtAssocResponseHeader : public Header
      * \return EHT capabilities, if present
      */
     const std::optional<EhtCapabilities>& GetEhtCapabilities() const;
+    /**
+     * Return the UHR capabilities, if present.
+     * \return UHR capabilities, if present
+     */
+    const std::optional<UhrCapabilities>& GetUhrCapabilities() const;
     /**
      * Return the Multi-Link Element information element, if present.
      *
@@ -689,6 +725,15 @@ class MgtAssocResponseHeader : public Header
     void SetEhtCapabilities(EhtCapabilities&& ehtCapabilities);
 
     /**
+     * Set the UHR capabilities.
+     * \param uhrCapabilities UHR capabilities
+     */
+    void SetUhrCapabilities(const UhrCapabilities& uhrCapabilities);
+
+    /** \copydoc SetUhrCapabilities */
+    void SetUhrCapabilities(UhrCapabilities&& uhrCapabilities);
+
+    /**
      * Set the Multi-Link Element information element
      *
      * \param multiLinkElement the Multi-Link Element information element
@@ -725,6 +770,7 @@ class MgtAssocResponseHeader : public Header
     std::optional<HeOperation> m_heOperation;                 //!< HE operation
     std::optional<MuEdcaParameterSet> m_muEdcaParameterSet;   //!< MU EDCA Parameter Set
     std::optional<EhtCapabilities> m_ehtCapability;           //!< EHT capabilities
+    std::optional<UhrCapabilities> m_uhrCapability;           //!< UHR capabilities
     std::optional<MultiLinkElement> m_multiLinkElement;       //!< Multi-Link Element
 };
 
@@ -808,6 +854,15 @@ class MgtProbeRequestHeader : public Header
     void SetEhtCapabilities(EhtCapabilities&& ehtCapabilities);
 
     /**
+     * Set the UHR capabilities.
+     * \param uhrCapabilities UHR capabilities
+     */
+    void SetUhrCapabilities(const UhrCapabilities& uhrCapabilities);
+
+    /** \copydoc SetUhrCapabilities */
+    void SetUhrCapabilities(UhrCapabilities&& uhrCapabilities);
+
+    /**
      * Return the Service Set Identifier (SSID).
      *
      * \return SSID
@@ -857,6 +912,12 @@ class MgtProbeRequestHeader : public Header
     const std::optional<EhtCapabilities>& GetEhtCapabilities() const;
 
     /**
+     * Return the UHR capabilities, if present.
+     * \return UHR capabilities, if present
+     */
+    const std::optional<UhrCapabilities>& GetUhrCapabilities() const;
+
+    /**
      * Register this type.
      * \return The TypeId.
      */
@@ -875,6 +936,7 @@ class MgtProbeRequestHeader : public Header
     std::optional<VhtCapabilities> m_vhtCapability;           //!< VHT capabilities
     std::optional<HeCapabilities> m_heCapability;             //!< HE capabilities
     std::optional<EhtCapabilities> m_ehtCapability;           //!< EHT capabilities
+    std::optional<UhrCapabilities> m_uhrCapability;           //!< UHR capabilities
 };
 
 /**
@@ -965,6 +1027,11 @@ class MgtProbeResponseHeader : public Header
      * \return EHT capabilities, if present
      */
     const std::optional<EhtCapabilities>& GetEhtCapabilities() const;
+    /**
+     * Return the UHR capabilities, if present.
+     * \return UHR capabilities, if present
+     */
+    const std::optional<UhrCapabilities>& GetUhrCapabilities() const;
     /**
      * Return the ERP information, if present.
      *
@@ -1085,6 +1152,15 @@ class MgtProbeResponseHeader : public Header
 
     /** \copydoc SetEhtCapabilities */
     void SetEhtCapabilities(EhtCapabilities&& ehtCapabilities);
+
+    /**
+     * Set the UHR capabilities.
+     * \param uhrCapabilities UHR capabilities
+     */
+    void SetUhrCapabilities(const UhrCapabilities& uhrCapabilities);
+
+    /** \copydoc SetUhrCapabilities */
+    void SetUhrCapabilities(UhrCapabilities&& uhrCapabilities);
 
     /**
      * Set the Service Set Identifier (SSID).
@@ -1212,6 +1288,7 @@ class MgtProbeResponseHeader : public Header
     std::optional<ReducedNeighborReport>
         m_reducedNeighborReport;                        //!< Reduced Neighbor Report information
     std::optional<MultiLinkElement> m_multiLinkElement; //!< Multi-Link Element
+    std::optional<UhrCapabilities> m_uhrCapability;          //!< UHR capabilities
 };
 
 /**

@@ -25,6 +25,10 @@ set(source_files
     model/channel-access-manager.cc
     model/ctrl-headers.cc
     model/edca-parameter-set.cc
+    model/uhr/uhr-capabilities.cc
+    model/uhr/uhr-configuration.cc
+    model/uhr/uhr-phy.cc
+    model/uhr/uhr-ppdu.cc
     model/eht/eht-capabilities.cc
     model/eht/eht-configuration.cc
     model/eht/eht-phy.cc
@@ -171,6 +175,10 @@ set(header_files
     model/channel-access-manager.h
     model/ctrl-headers.h
     model/edca-parameter-set.h
+    model/uhr/uhr-capabilities.h
+    model/uhr/uhr-configuration.h
+    model/uhr/uhr-phy.h
+    model/uhr/uhr-ppdu.h
     model/eht/eht-capabilities.h
     model/eht/eht-configuration.h
     model/eht/eht-phy.h

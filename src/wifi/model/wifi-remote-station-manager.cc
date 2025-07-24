@@ -28,6 +28,7 @@
 #include "wifi-phy.h"
 
 #include "ns3/boolean.h"
+#include "ns3/uhr-configuration.h"
 #include "ns3/eht-configuration.h"
 #include "ns3/enum.h"
 #include "ns3/he-configuration.h"
@@ -268,6 +269,12 @@ bool
 WifiRemoteStationManager::GetEhtSupported() const
 {
     return bool(m_wifiPhy->GetDevice()->GetEhtConfiguration());
+}
+
+bool
+WifiRemoteStationManager::GetUhrSupported() const
+{
+    return bool(m_wifiPhy->GetDevice()->GetUhrConfiguration());
 }
 
 bool
@@ -1376,6 +1383,7 @@ WifiRemoteStationManager::LookupState(Mac48Address address) const
     state->m_vhtCapabilities = nullptr;
     state->m_heCapabilities = nullptr;
     state->m_ehtCapabilities = nullptr;
+    state->m_uhrCapabilities = nullptr;
     state->m_channelWidth = m_wifiPhy->GetChannelWidth();
     state->m_guardInterval = GetGuardInterval();
     state->m_ness = 0;
@@ -1537,6 +1545,18 @@ WifiRemoteStationManager::AddStationEhtCapabilities(Mac48Address from,
     SetQosSupport(from, true);
 }
 
+void
+WifiRemoteStationManager::AddStationUhrCapabilities(Mac48Address from,
+                                                    UhrCapabilities uhrCapabilities)
+{
+    // Used by all stations to record UHR capabilities of remote stations
+    NS_LOG_FUNCTION(this << from << uhrCapabilities);
+    auto state = LookupState(from);
+    // TODO: to be completed based on UHR standard details
+    state->m_uhrCapabilities = Create<const UhrCapabilities>(uhrCapabilities);
+    SetQosSupport(from, true);
+}
+
 Ptr<const HtCapabilities>
 WifiRemoteStationManager::GetStationHtCapabilities(Mac48Address from)
 {
@@ -1559,6 +1579,12 @@ Ptr<const EhtCapabilities>
 WifiRemoteStationManager::GetStationEhtCapabilities(Mac48Address from)
 {
     return LookupState(from)->m_ehtCapabilities;
+}
+
+Ptr<const UhrCapabilities>
+WifiRemoteStationManager::GetStationUhrCapabilities(Mac48Address from)
+{
+    return LookupState(from)->m_uhrCapabilities;
 }
 
 bool
@@ -1934,6 +1960,12 @@ WifiRemoteStationManager::GetEhtSupported(const WifiRemoteStation* station) cons
     return (bool)(station->m_state->m_ehtCapabilities);
 }
 
+bool
+WifiRemoteStationManager::GetUhrSupported(const WifiRemoteStation* station) const
+{
+    return (bool)(station->m_state->m_uhrCapabilities);
+}
+
 uint8_t
 WifiRemoteStationManager::GetNMcsSupported(const WifiRemoteStation* station) const
 {
@@ -2033,6 +2065,12 @@ bool
 WifiRemoteStationManager::GetEhtSupported(Mac48Address address) const
 {
     return (bool)(LookupState(address)->m_ehtCapabilities);
+}
+
+bool
+WifiRemoteStationManager::GetUhrSupported(Mac48Address address) const
+{
+    return (bool)(LookupState(address)->m_uhrCapabilities);
 }
 
 void

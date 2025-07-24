@@ -232,6 +232,7 @@ typedef uint8_t WifiInformationElementId;
 
 #define IE_EXT_MULTI_LINK_ELEMENT ((WifiInformationElementId)107)
 #define IE_EXT_EHT_CAPABILITIES ((WifiInformationElementId)108)
+#define IE_EXT_UHR_CAPABILITIES ((WifiInformationElementId)109)
 
 /**
  * \brief Information element, as defined in 802.11-2007 standard

@@ -936,6 +936,10 @@ ApWifiMac::SendProbeResp(Mac48Address to, uint8_t linkId)
             probe.SetMultiLinkElement(GetMultiLinkElement(linkId, WIFI_MAC_MGT_PROBE_RESPONSE));
         }
     }
+    if (GetUhrSupported())
+    {
+        probe.SetUhrCapabilities(GetUhrCapabilities(linkId));
+    }
     packet->AddHeader(probe);
 
     if (!GetQosSupported())
@@ -1010,6 +1014,10 @@ ApWifiMac::GetAssocResp(Mac48Address to, uint8_t linkId)
     if (GetEhtSupported())
     {
         assoc.SetEhtCapabilities(GetEhtCapabilities(linkId));
+    }
+    if (GetUhrSupported())
+    {
+        assoc.SetUhrCapabilities(GetUhrCapabilities(linkId));
     }
     return assoc;
 }
@@ -1299,6 +1307,10 @@ ApWifiMac::SendOneBeacon(uint8_t linkId)
              */
             beacon.SetMultiLinkElement(GetMultiLinkElement(linkId, WIFI_MAC_MGT_BEACON));
         }
+    }
+    if (GetUhrSupported())
+    {
+        beacon.SetUhrCapabilities(GetUhrCapabilities(linkId));
     }
     packet->AddHeader(beacon);
 
@@ -1648,7 +1660,10 @@ ApWifiMac::ReceiveAssocRequest(const AssocReqRefVariant& assoc,
             //  const auto& ehtCapabilities = frame.GetEhtCapabilities ();
             // TODO: to be completed
         }
-
+        if (GetUhrSupported())
+        {
+        
+        }
         // The association request from the station can be accepted.
         // Record all its supported modes in its associated WifiRemoteStation
         auto phy = GetWifiPhy(linkId);
@@ -1723,7 +1738,19 @@ ApWifiMac::ReceiveAssocRequest(const AssocReqRefVariant& assoc,
                 // here should add a control to add basic MCS when it is implemented
             }
         }
-
+        if (GetUhrSupported())
+        {
+            const auto& uhrCapabilities = frame.GetUhrCapabilities();
+            if (uhrCapabilities.has_value())
+            {
+                // If the STA included a UHR IE, store it in the remote station manager
+                remoteStationManager->AddStationUhrCapabilities(from, *uhrCapabilities);
+                
+                // You can add further logic here, for example, checking specific
+                // capabilities within the UHR IE before accepting the association.
+                // For now, we just store it.
+            }
+        }
         NS_LOG_DEBUG("Association Request from " << from << " accepted");
         remoteStationManager->RecordWaitAssocTxOk(from);
         return true;

@@ -332,6 +332,10 @@ StaWifiMac::GetAssociationRequest(bool isReassoc, uint8_t linkId) const
         {
             frame.SetEhtCapabilities(GetEhtCapabilities(linkId));
         }
+        if (GetUhrSupported())
+        {
+            frame.SetUhrCapabilities(GetUhrCapabilities(linkId));
+        }
     };
 
     std::visit(fill, mgtFrame);
@@ -1324,6 +1328,18 @@ StaWifiMac::UpdateApInfo(const MgtFrameType& frame,
         // TODO: once we support non constant rate managers, we should add checks here whether EHT
         // is supported by the peer
         GetWifiRemoteStationManager(linkId)->AddStationEhtCapabilities(apAddr, *ehtCapabilities);
+        
+        if (!GetUhrSupported())
+        {
+            return;
+        }
+        /* UHR station */
+        const auto& uhrCapabilities = frame.GetUhrCapabilities();
+        if (uhrCapabilities.has_value())
+        {
+            GetWifiRemoteStationManager(linkId)->AddStationUhrCapabilities(apAddr, *uhrCapabilities);
+            NS_LOG_INFO("STA stored UHR Capabilities from AP " << apAddr);
+        }
     };
 
     // process Information Elements included in the current frame variant
