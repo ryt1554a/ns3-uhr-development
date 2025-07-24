@@ -24,7 +24,7 @@
 
 #include "mgt-headers.h"
 #include "wifi-mac.h"
-
+#include <cstdint>
 #include <variant>
 
 class TwoLevelAggregationTest;
