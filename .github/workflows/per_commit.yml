@@ -219,7 +219,7 @@ jobs:
           # 從 cmake-cache 目錄中收集所有 .gcno 和 .gcda 檔案的數據
           lcov --capture --directory ./cmake-cache --output-file ns3.info
           # (可選) 移除系統標頭檔和外部函式庫的覆蓋率，讓報告更乾淨
-          lcov --remove ns3.info '/usr/*' '*/bits/*' --output-file ns3.info
+          lcov --remove ns3.info '/usr/*' '*/bits/*' --output-file ns3.info --ignore-errors unused
 
       # 步驟 8: 使用官方 Codecov Action 上傳報告 (v5 版本)
       - name: Upload coverage reports to Codecov
