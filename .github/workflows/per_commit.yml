@@ -161,52 +161,68 @@ jobs:
 
   Codecov:
     runs-on: ubuntu-latest
-    needs: Ubuntu
-    if: needs.Ubuntu.outputs.cache_misses != '0'
+    needs: Ubuntu # 確保這個 job 依賴於您主要的 Ubuntu build job
+    if: needs.Ubuntu.outputs.cache_misses != '0' # 僅在有重新編譯時執行
     steps:
-      - uses: actions/checkout@v3
-      - name: Install required packages
+      # 步驟 1: 下載程式碼
+      - uses: actions/checkout@v4
+
+      # 步驟 2: 設定 Python 環境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 步驟 3: 安裝所有系統依賴 (包含 lcov)
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -y install apt-utils
-          sudo apt-get -y install git gcc g++ cmake python3 make ninja-build
-          sudo apt-get -y install tcpdump libgsl-dev libxml2-dev
-          sudo apt-get -y install curl unzip tar
-          sudo apt-get -y install ccache
-          sudo apt-get -y install lcov
-      - name: Get timestamp
-        id: time
-        run: python3 -c "from datetime import datetime; print('time='+datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))" >> $GITHUB_ENV
-      - name: Restore ccache
-        id: ccache
-        uses: actions/cache@v3
-        with:
-          path: .ccache
-          key: ubuntu-coverage-${{env.time}}
-          restore-keys: ubuntu-coverage-
-      - name: Setup ccache
-        run: |
-          ccache --set-config=cache_dir="$GITHUB_WORKSPACE/.ccache"
-          ccache --set-config=max_size=400M
-          ccache --set-config=compression=true
-          ccache -z
-      - name: Configure CMake
+          sudo apt-get -y install \
+            apt-utils \
+            git \
+            gcc \
+            g++ \
+            cmake \
+            make \
+            ninja-build \
+            tcpdump \
+            libgsl-dev \
+            libxml2-dev \
+            curl \
+            unzip \
+            tar \
+            ccache \
+            lcov
+
+      # 步驟 4: 設定 CMake (啟用 Gcov)
+      - name: Configure CMake for Coverage
         run: |
           ./ns3 configure --enable-asserts --enable-examples --enable-tests --disable-werror --enable-gcov -G"Ninja"
+
+      # 步驟 5: 編譯 ns-3
       - name: Build ns-3
         run: |
           ./ns3 build
-      - name: Print ccache statistics
-        id: ccache_results
+
+      # 步驟 6: 執行測試 (這是產生覆蓋率數據的關鍵步驟！)
+      - name: Run tests to generate coverage data
+        run: python3 test.py --no-build
+
+      # 步驟 7: 使用 lcov 收集覆蓋率數據
+      - name: Generate coverage report
         run: |
-          ccache -s
-          python3 -c "import re, subprocess;print('cache_misses=%d' % int(re.findall('cache_miss(.*)', subprocess.check_output(['ccache', '--print-stats']).decode())[0]))" >> $GITHUB_ENV
-      - name: Generate coverage data and submit to codecov.io
-        if: env.cache_misses != '0'
-        run: |
-          ./ns3 build coverage_gcc
-          cd ./build/coverage
-          bash <(curl -s https://codecov.io/bash) -f ns3.info || echo "Codecov did not collect coverage reports"
+          # 從 cmake-cache 目錄中收集所有 .gcno 和 .gcda 檔案的數據
+          lcov --capture --directory ./cmake-cache --output-file ns3.info
+          # (可選) 移除系統標頭檔和外部函式庫的覆蓋率，讓報告更乾淨
+          lcov --remove ns3.info '/usr/*' '*/bits/*' --output-file ns3.info
+
+      # 步驟 8: 使用官方 Codecov Action 上傳報告 (v5 版本)
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # 建議設定 repo secret
+          files: ./ns3.info # 明確指定報告檔案
+          fail_ci_if_error: true # 如果上傳失敗，則讓 CI 失敗
 
   Windows_MinGW:
     runs-on: windows-latest
