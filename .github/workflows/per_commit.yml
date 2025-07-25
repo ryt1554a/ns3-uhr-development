@@ -83,50 +83,81 @@ jobs:
 
   CodeQL:
     runs-on: ubuntu-latest
-    needs: Ubuntu
-    if: needs.Ubuntu.outputs.cache_misses != '0'
+    needs: Ubuntu # 確保這個 job 依賴於您主要的 Ubuntu build job
+    if: needs.Ubuntu.outputs.cache_misses != '0' # 僅在有快取未命中 (即有重新編譯) 時執行
     strategy:
       fail-fast: false
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
-      # Initializes the CodeQL tools for scanning.
+        uses: actions/checkout@v4 # 更新到 v4
+
+      # 步驟 1: 使用官方 action 來設定 Python 環境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # 步驟 2: 初始化 CodeQL 工具
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3 # 更新到 v3
         with:
           languages: 'cpp'
-      - name: Install required packages
+
+      # 步驟 3: 一次性安裝所有需要的系統套件 (不再需要安裝 python)
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -y install apt-utils
-          sudo apt-get -y install git gcc g++ cmake python make ninja-build
-          sudo apt-get -y install tcpdump libgsl-dev libxml2-dev
-          sudo apt-get -y install curl unzip tar
-          sudo apt-get -y install ccache
+          sudo apt-get -y install \
+            apt-utils \
+            git \
+            gcc \
+            g++ \
+            cmake \
+            make \
+            ninja-build \
+            tcpdump \
+            libgsl-dev \
+            libxml2-dev \
+            curl \
+            unzip \
+            tar \
+            ccache
+
+      # 步驟 4: 獲取時間戳 (不需變更)
       - name: Get timestamp
         id: time
         run: python3 -c "from datetime import datetime; print('time='+datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))" >> $GITHUB_ENV
+
+      # 步驟 5: 還原 ccache 快取
       - name: Restore ccache
         id: ccache
-        uses: actions/cache@v3
+        uses: actions/cache@v4 # 更新到 v4
         with:
           path: .ccache
           key: ubuntu-ci-${{env.time}}
           restore-keys: ubuntu-ci-
+
+      # 步驟 6: 設定 ccache (不需變更)
       - name: Setup ccache
         run: |
           ccache --set-config=cache_dir="$GITHUB_WORKSPACE/.ccache"
           ccache --set-config=max_size=400M
           ccache --set-config=compression=true
           ccache -z
+
+      # 步驟 7: 設定 CMake (不需變更)
       - name: Configure CMake
         run: |
           ./ns3 configure -d release --enable-asserts --enable-examples --enable-tests --disable-werror -G"Ninja"
+
+      # 步驟 8: 編譯 ns-3 (CodeQL 需要這一步來分析程式碼)
       - name: Build ns-3
         run: |
           ./ns3 build
+
+      # 步驟 9: 執行 CodeQL 分析
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3 # 更新到 v3
 
   Codecov:
     runs-on: ubuntu-latest
