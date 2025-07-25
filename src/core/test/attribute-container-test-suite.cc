@@ -187,12 +187,14 @@ operator<<(std::ostream& os, const AttributeContainerObject& obj)
  * \param y The right operand.
  * \return true if the pairs have the same numerical values.
  */
-template <class A, class B, class C, class D>
+/*
+ template <class A, class B, class C, class D>
 bool
 operator==(const std::pair<A, B>& x, const std::pair<C, D>& y)
 {
     return x.first == y.first && x.second == y.second;
 }
+*/
 
 /**
  * \ingroup attribute-tests
@@ -292,7 +294,14 @@ AttributeContainerTestCase::DoRun()
         for (const auto& v : ref)
         {
             NS_TEST_ASSERT_MSG_NE(true, (aciter == ac.End()), "AC iterator reached end");
-            NS_TEST_ASSERT_MSG_EQ(v, (*aciter)->Get(), "Incorrect value");
+            // --- FIX START ---
+            // Original line caused ambiguous overload error on macOS/Clang
+            // NS_TEST_ASSERT_MSG_EQ(v, (*aciter)->Get(), "Incorrect value");
+            // Comparing members directly is safer and more portable.
+            auto retrieved_val = (*aciter)->Get();
+            NS_TEST_ASSERT_MSG_EQ(v.first, retrieved_val.first, "Incorrect key");
+            NS_TEST_ASSERT_MSG_EQ(v.second, retrieved_val.second, "Incorrect value");
+            // --- FIX END ---
             ++aciter;
         }
         NS_TEST_ASSERT_MSG_EQ(true, (aciter == ac.End()), "AC iterator did not reach end");

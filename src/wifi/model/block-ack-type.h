@@ -22,6 +22,7 @@
 
 #include <ostream>
 #include <vector>
+#include <cstdint>
 
 namespace ns3
 {
